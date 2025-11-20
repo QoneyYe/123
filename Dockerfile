@@ -1,16 +1,15 @@
 FROM node:alpine3.20
 
-WORKDIR /app
+WORKDIR /tmp
 
-# 复制package文件并安装依赖
-COPY package*.json ./
-RUN npm install --production
-
-# 复制应用代码
 COPY . .
 
-# 暴露端口
-EXPOSE 3000
+EXPOSE 3000/tcp
 
-# 启动命令
-CMD ["npm", "start"]
+RUN apk update && apk upgrade &&\
+    apk add --no-cache openssl curl gcompat iproute2 coreutils &&\
+    apk add --no-cache bash &&\
+    chmod +x index.js &&\
+    npm install
+
+CMD ["node", "index.js"]
